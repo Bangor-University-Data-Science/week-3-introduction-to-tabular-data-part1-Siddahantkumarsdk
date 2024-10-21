@@ -1,0 +1,28 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: week3-tabular-data-part1
+      id: week3-tabular-data-part1
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 60
+        max-score: 100
+        setup-command: pip install pytest pandas
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        WEEK3-TABULAR-DATA-PART1_RESULTS: "${{steps.week3-tabular-data-part1.outputs.result}}"
+      with:
+        runners: week3-tabular-data-part1
